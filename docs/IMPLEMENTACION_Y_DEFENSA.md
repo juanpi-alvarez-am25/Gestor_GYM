@@ -1,5 +1,7 @@
 # Implementación y defensa de GymAdminApp
 
+La primera versión de código implementa los recorridos principales y agrega documentación Doxygen. Los resultados comprobados y las verificaciones pendientes se registran en [Verificación](VERIFICACION.md). El grupo debe revisar, ejecutar y comprender los cambios antes de la entrega.
+
 ## Hitos de implementación
 
 | Hito | Resultado | Condición para avanzar |
@@ -26,6 +28,8 @@ Las mejoras de presentación se realizan sobre recorridos ya funcionales. Máqui
 | src/main/resources/META-INF | Unidad de persistencia JDO cuando corresponda a la integración elegida |
 | db | Preparación de la base e instrucciones de datos de demostración |
 | src/test/java | Pruebas de reglas y de integración |
+| Doxyfile y docs/DOXYGEN.md | Configuración e índice de documentación del código |
+| .github/workflows/verificar.yml | Compilación, MySQL, Doxygen y reportes en CI |
 
 El README ejecutable se escribirá a partir de estos archivos reales y de una instalación comprobada. Las credenciales personales se reciben por configuración local o variables de entorno y no se publican.
 

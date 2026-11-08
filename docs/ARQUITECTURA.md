@@ -1,8 +1,8 @@
 # Arquitectura y relación con la materia
 
-## Organización propuesta
+## Organización implementada
 
-La aplicación será un proyecto Maven con paquetes de dominio, repositorio, servicio, controlador y configuración. Las vistas estarán en templates y los recursos CSS e imágenes en static. Esta separación en paquetes cubre las responsabilidades requeridas; conocer proyectos multimódulo no obliga a dividir esta aplicación en varios módulos.
+La aplicación es un proyecto Maven con paquetes de dominio, repositorio, servicio, controlador y configuración. Las vistas están en templates y los recursos CSS e imágenes en static. Esta separación en paquetes cubre las responsabilidades requeridas; conocer proyectos multimódulo no obliga a dividir esta aplicación en varios módulos.
 
 | Capa | Responsabilidad | Elementos propuestos |
 |---|---|---|
@@ -32,7 +32,7 @@ El contraste de videos se efectuó sobre pantallas y ejemplos visibles. No se co
 
 Spring administrará los servicios, repositorios y una única PersistenceManagerFactory. La configuración de infraestructura se expresará mediante los mecanismos enseñados, como Configuration y Bean. Los componentes se descubrirán en el paquete base correcto.
 
-Las dependencias se inyectarán de forma consistente. La inyección por constructor hace visibles las dependencias obligatorias y permite sustituirlas en pruebas. Los socios y pagos creados por cada operación son datos de dominio; no se registrará un bean compartido para cada fila de la base.
+Las dependencias se inyectan de forma consistente. La inyección por constructor hace visibles las dependencias obligatorias y permite sustituirlas en pruebas. Los socios y pagos creados por cada operación son datos de dominio; no se registrará un bean compartido para cada fila de la base.
 
 La integración con Spring Boot debe conservar estos conceptos. No se crearán contextos manuales independientes dentro de cada controlador o servicio.
 
@@ -46,6 +46,14 @@ Las consultas y sus resultados se cierran. Antes de devolver datos a las vistas 
 
 El ejemplo docente de IRepositorio y Repositorio constituye una base para comprender persistencia y detach. Debe adaptarse al servicio transaccional compuesto: copiar sin cambios métodos que abren y confirman transacciones independientes no garantiza la atomicidad de membresía y pago.
 
+## Control concurrente y documentación
+
+UnidadTrabajo usa READ COMMITTED y `Transaction.setSerializeRead(true)` en escrituras. Los servicios de contratación, acceso y baja recuperan primero el mismo socio dentro de esa transacción, para mantener el bloqueo hasta confirmar o revertir. Después del bloqueo se vuelve a consultar la clave idempotente; la segunda solicitud concurrente puede reconocer el resultado confirmado por la primera. Las consultas de lectura usan transacciones sin esa opción de bloqueo.
+
+La base respalda la unicidad del DNI en Persona, la clave de operación, el comprobante y la referencia de Pago a Membresia. Asistencia mantiene una referencia técnica `socioAbierto`, única y nullable: ocupa la identidad mientras la visita está abierta y se vuelve nula al salir. Esto permite conservar varias visitas cerradas y rechazar dos abiertas para un socio. La prueba concurrente se ejecuta con dos administradores y transacciones reales.
+
+El código se documenta con comentarios compatibles con Doxygen. El Doxyfile activa la detección de API no documentada y trata las advertencias como errores; genera diagramas, referencias a clases y código navegable. La [guía de Doxygen](DOXYGEN.md) explica su ejecución. Los DTO de lectura y las copias detached se preparan dentro de la unidad: ninguna plantilla ejecuta consultas JDO.
+
 ## Recorrido de contratación
 
 1. El controlador recibe socio, plan, método y clave de operación. Valida el formato del formulario.
@@ -57,7 +65,7 @@ El ejemplo docente de IRepositorio y Repositorio constituye una base para compre
 
 ## Identidad y consistencia
 
-Se propondrá NEW_TABLE para la jerarquía, de modo que el DNI único se verifique en la tabla base. Las subclases conservan la identidad de Persona. Esta elección se comprobará inspeccionando el esquema generado y persistiendo y consultando cada tipo; la aprobación del hito requiere esos resultados.
+Se implementa NEW_TABLE para la jerarquía, de modo que el DNI único se verifica en la tabla base. Las subclases conservan la identidad de Persona. Las pruebas de integración persisten y recuperan socios, empleados y entrenadores; el esquema de referencia se encuentra en `db/esquema-referencia.sql`. El número de socio se calcula a partir de la identidad generada; no requiere un contador independiente ni reutiliza bajas.
 
 Las relaciones se expresarán mediante referencias y colecciones JDO, con claves foráneas y restricciones apropiadas. No se borrarán socios, planes ni movimientos referenciados para resolver una baja. La unicidad de DNI, número de socio, comprobante, solicitud y pago por membresía debe estar respaldada por la base cuando corresponda.
 
@@ -65,13 +73,18 @@ Las relaciones se expresarán mediante referencias y colecciones JDO, con claves
 
 El pom.xml docente consultado utiliza Java 17, JDO 3.2.1, DataNucleus core 6.0.11, api-jdo 6.0.5 y rdbms 6.0.11, MySQL Connector/J 8.4.0 y plugin enhancer 6.0.1. Estos datos describen ese ejemplo, no una combinación de Spring Boot ya comprobada para GymAdminApp.
 
-Se fijará una única combinación compatible en el primer hito. Antes de declararla apta deben funcionar compilación, enhancement, arranque web y una operación JDO contra MySQL. La guía de instalación final identificará la versión del servidor MySQL y las dependencias exactas. Una base en memoria, si se utiliza para pruebas rápidas, no reemplaza la comprobación contra la base elegida para la entrega.
+La primera versión fija Spring Boot 3.5.16 sobre Java 17 junto con las versiones JDO/DataNucleus indicadas. La guía de instalación está en el README y los resultados en [Verificación](VERIFICACION.md). Las pruebas de integración utilizan MySQL real; no se utiliza H2 como sustituto de esa comprobación.
+
+El plugin de Spring Boot declara `requiresUnpack` para los tres JAR de DataNucleus: su registro de complementos necesita leer los manifiestos desde archivos físicos y no reconoce directamente las URL de JAR anidados del cargador de Boot. Una prueba inicia el JAR empaquetado en otro proceso para cubrir esta integración, además de las pruebas dentro de Maven.
+
+La fábrica aplica explícitamente las credenciales externas sobre la unidad `gymadmin`. La propiedad `datanucleus.schema.generateDatabase.mode=create` prepara las tablas de todas las clases declaradas al arrancar; `autoCreateAll` y `validateAll` completan y validan sus metadatos sin un modo de borrado.
 
 ## Referencias de trabajo
 
 - [Consigna y propuesta compartida](https://docs.google.com/document/d/1SNZ8984_Fr8OAzh3zMIb2pdM4oEklJoZbubK52QFYvY).
 - Apuntes de las unidades 1 a 4 y ejercicios de las unidades 5 a 7 compartidos en el proyecto.
 - Videos de las clases 12, 13 y 14 compartidos en el proyecto.
+- [Guía JDO de DataNucleus 6: esquema y transacciones](https://www.datanucleus.org/products/accessplatform_6_0/jdo/persistence.html).
 - [Repositorio docente](https://github.com/juanjosenava75-bot/proyecto-jdo).
 - [Persona del ejemplo docente](https://github.com/juanjosenava75-bot/proyecto-jdo/blob/main/src/main/java/com/programacion2/dominio/Persona.java).
 - [Repositorio JDO del ejemplo docente](https://github.com/juanjosenava75-bot/proyecto-jdo/blob/main/src/main/java/com/programacion2/repositorio/Repositorio.java).

@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Inicio')}"></head>
+<body><nav th:replace="~{fragmentos :: menu}"></nav>
+<main class="container py-4"><div th:replace="~{fragmentos :: mensajes}"></div>
+<div class="encabezado"><div><p class="eyebrow">GESTIÓN DEL GIMNASIO</p><h1>Todo listo para recibir socios.</h1><p class="text-secondary">Controlá membresías, registrá visitas y consultá cada historial.</p></div><span class="badge text-bg-light border" th:text="${#temporals.format(hoy, 'dd/MM/yyyy')}"></span></div>
+<section class="row g-3 my-3" aria-label="Indicadores del día"><div class="col-md-4"><div class="card p-4"><p>Socios activos</p><strong class="indicador" th:text="${panel.activos}">0</strong><a th:href="@{/socios(estado='ACTIVOS')}">Ver socios</a></div></div><div class="col-md-4"><div class="card p-4"><p>Personas en el gimnasio</p><strong class="indicador" th:text="${panel.abiertas}">0</strong><a th:href="@{/recepcion}">Abrir recepción</a></div></div><div class="col-md-4"><div class="card p-4"><p>Vencen en los próximos 7 días</p><strong class="indicador" th:text="${panel.proximos}">0</strong><a th:href="@{/vencimientos}">Revisar vencimientos</a></div></div></section>
+<section class="card p-4 mt-4"><h2 class="h4">Acciones frecuentes</h2><div class="d-flex gap-3 flex-wrap mt-3"><a class="btn btn-primary" th:href="@{/recepcion}">Registrar una visita</a><a class="btn btn-outline-primary" th:href="@{/socios/nuevo}">Dar de alta un socio</a><a class="btn btn-outline-secondary" th:href="@{/planes}">Consultar planes</a></div></section>
+</main><footer th:replace="~{fragmentos :: pie}"></footer></body></html>

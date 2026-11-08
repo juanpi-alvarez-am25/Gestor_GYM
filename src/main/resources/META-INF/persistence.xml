@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
+  <persistence-unit name="gymadmin" transaction-type="RESOURCE_LOCAL">
+    <provider>org.datanucleus.api.jdo.JDOPersistenceManagerFactory</provider>
+    <class>com.gymadmin.dominio.Persona</class>
+    <class>com.gymadmin.dominio.Socio</class>
+    <class>com.gymadmin.dominio.Empleado</class>
+    <class>com.gymadmin.dominio.Entrenador</class>
+    <class>com.gymadmin.dominio.PlanMembresia</class>
+    <class>com.gymadmin.dominio.Membresia</class>
+    <class>com.gymadmin.dominio.Pago</class>
+    <class>com.gymadmin.dominio.Asistencia</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <properties>
+      <property name="datanucleus.schema.autoCreateAll" value="true"/>
+      <property name="datanucleus.schema.generateDatabase.mode" value="create"/>
+      <property name="datanucleus.schema.validateAll" value="true"/>
+      <property name="datanucleus.transaction.isolation" value="read-committed"/>
+      <property name="datanucleus.cache.level2.type" value="none"/>
+      <property name="datanucleus.persistenceByReachabilityAtCommit" value="true"/>
+    </properties>
+  </persistence-unit>
+</persistence>
