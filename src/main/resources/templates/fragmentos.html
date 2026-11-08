@@ -1,0 +1,15 @@
+<!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabecera(titulo)"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title th:text="${titulo + ' · GymAdminApp'}">GymAdminApp</title>
+<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}"><link rel="stylesheet" th:href="@{/css/gym.css}"></head>
+<body><nav th:fragment="menu" class="navbar navbar-dark bg-dark no-print" aria-label="Navegación principal"><div class="container gap-3 flex-wrap">
+<a class="navbar-brand fw-bold" th:href="@{/}">GYM<span class="marca">ADMIN</span></a>
+<div class="d-flex gap-3 flex-wrap py-2"><a th:href="@{/}">Inicio</a><a th:href="@{/recepcion}">Recepción</a><a th:href="@{/socios}">Socios</a><a th:href="@{/personal}">Personal</a><a th:href="@{/planes}">Planes</a><a th:href="@{/vencimientos}">Vencimientos</a></div></div></nav>
+<div th:fragment="mensajes"><div th:if="${exito}" class="alert alert-success" role="status" th:text="${exito}"></div><div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div></div>
+<div th:fragment="errores" th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger" role="alert"><p th:each="e : ${#fields.globalErrors()}" th:text="${e}" class="mb-0"></p></div>
+<div th:fragment="datosPersona" class="row g-3">
+<div class="col-md-6"><label for="nombre" class="form-label">Nombre</label><input id="nombre" class="form-control" th:field="*{nombre}" maxlength="80" required><p class="text-danger" th:errors="*{nombre}"></p></div>
+<div class="col-md-6"><label for="apellido" class="form-label">Apellido</label><input id="apellido" class="form-control" th:field="*{apellido}" maxlength="80" required><p class="text-danger" th:errors="*{apellido}"></p></div>
+<div class="col-md-6"><label for="dni" class="form-label">DNI</label><input id="dni" class="form-control" th:field="*{dni}" maxlength="18" inputmode="numeric" aria-describedby="dni-ayuda" required><small id="dni-ayuda" class="text-secondary">De 7 a 9 dígitos; puede incluir puntos.</small><p class="text-danger" th:errors="*{dni}"></p></div>
+<div class="col-md-6"><label for="telefono" class="form-label">Teléfono <span class="text-secondary">(opcional)</span></label><input id="telefono" class="form-control" th:field="*{telefono}" maxlength="32" type="tel"><p class="text-danger" th:errors="*{telefono}"></p></div></div>
+<footer th:fragment="pie" class="container text-secondary small py-4 no-print">GymAdminApp · Gestión del gimnasio · Programación II, IFES</footer></body></html>

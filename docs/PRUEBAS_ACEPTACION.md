@@ -2,7 +2,7 @@
 
 ## Uso del documento
 
-Estos son casos por ejecutar. Ninguno se declara aprobado mientras no exista aplicación y evidencia del resultado. Registrar para cada ejecución commit, entorno, fecha, responsable, datos utilizados, resultado obtenido y enlace o ruta de la evidencia. Los datos deben ser ficticios y las operaciones deben realizarse en una base de prueba.
+Este listado define los casos completos de aceptación. La cobertura automatizada y las verificaciones realizadas se registran en [Verificación del código](VERIFICACION.md); no implica que todos los casos manuales estén aprobados. Registrar para cada ejecución commit, entorno, fecha, responsable, datos utilizados, resultado obtenido y enlace o ruta de la evidencia. Los datos deben ser ficticios y las operaciones deben realizarse en una base de prueba.
 
 El reloj de prueba se podrá fijar en lunes 2 de noviembre de 2026, zona America/Argentina/Buenos_Aires. Para las comprobaciones semanales también se utilizarán martes 3, jueves 5, viernes 6 y lunes 9 de noviembre. Los precios son datos de prueba definidos en el juego de demostración, no precios reales del gimnasio.
 
@@ -56,6 +56,6 @@ Automatizar las fechas y el conteo semanal con reloj fijo; la operación compues
 
 | Caso | Commit y entorno | Responsable y fecha | Resultado obtenido | Evidencia |
 |---|---|---|---|---|
-| Por registrar | Por registrar | Por registrar | Pendiente | Sin ejecución |
+| Ejecución automatizada de la primera versión | Java 17 / Maven 3.9.11 / MySQL 8.4.13 | Asistencia de Codex, 08/11/2026; revisión del grupo pendiente | Ver [resultados y límites](VERIFICACION.md) | Reportes Surefire, Failsafe y generación Doxygen |
 
 La entrega debe identificar los casos aprobados, fallidos o pendientes y las limitaciones conocidas. No se reemplaza evidencia por la presencia de este listado.

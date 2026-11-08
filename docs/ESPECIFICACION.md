@@ -39,7 +39,7 @@ Se usarán BigDecimal para importes, String para DNI y teléfono, LocalDate para
 | Socio con Asistencia | Un socio puede tener muchas visitas; cada visita pertenece a un socio. |
 | Membresia con Asistencia | Cada visita referencia la membresía utilizada; debe pertenecer al mismo socio. |
 
-La estrategia propuesta es NEW_TABLE para la jerarquía persistente, con identidad y DNI único en la tabla base Persona y referencias de las subclases. Permite centralizar la unicidad del DNI. Es una decisión entre las estrategias trabajadas en la materia y deberá verificarse con las tablas y consultas del primer hito ejecutable. No se considerará validada únicamente por el diagrama.
+La estrategia implementada es NEW_TABLE para la jerarquía persistente, con identidad y DNI único en la tabla base Persona y referencias de las subclases. Permite centralizar la unicidad del DNI. Es una decisión entre las estrategias trabajadas en la materia. Las pruebas de integración verifican las clases concretas y sus campos; el esquema generado queda como referencia en `db/esquema-referencia.sql`. No se considera validada únicamente por el diagrama.
 
 ## Reglas de socios y personal
 
@@ -81,7 +81,7 @@ R16. No se permite el ingreso de un socio inactivo, sin membresía aplicable hoy
 
 R17. La salida corresponde a una visita abierta y debe ser posterior al ingreso. Puede registrarse aunque la membresía haya vencido durante la visita. La salida no vuelve a comprobar la autorización de entrada.
 
-R18. Dos solicitudes simultáneas no deben dejar dos ingresos abiertos ni períodos superpuestos. El mecanismo de control dentro de la transacción se elegirá y verificará con JDO y MySQL antes de aceptar ese caso como aprobado.
+R18. Dos solicitudes simultáneas no deben dejar dos ingresos abiertos ni períodos superpuestos. El mecanismo transaccional implementado se describe en Arquitectura y se comprueba con administradores y transacciones independientes en MySQL.
 
 ## Pantallas y comportamiento esperado
 

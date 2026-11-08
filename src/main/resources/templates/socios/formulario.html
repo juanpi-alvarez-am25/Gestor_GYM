@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Datos del socio')}"></head>
+<body><nav th:replace="~{fragmentos :: menu}"></nav>
+<main class="container py-4"><div th:replace="~{fragmentos :: mensajes}"></div>
+<p class="eyebrow">SOCIOS</p><h1 th:text="${id != null} ? 'Editar socio' : 'Nuevo socio'"></h1><p class="text-secondary">El número se asigna al guardar. Los datos e historiales se conservan al editar.</p>
+<form class="card p-4 mt-4" method="post" th:action="${id != null} ? @{/socios/{id}(id=${id})} : @{/socios}" th:object="${form}"><div th:replace="~{fragmentos :: errores}"></div><div th:replace="~{fragmentos :: datosPersona}"></div><div class="d-flex gap-3 mt-4"><button class="btn btn-primary">Guardar socio</button><a class="btn btn-outline-secondary" th:href="${id != null} ? @{/socios/{id}(id=${id})} : @{/socios}">Cancelar</a></div></form>
+</main><footer th:replace="~{fragmentos :: pie}"></footer></body></html>

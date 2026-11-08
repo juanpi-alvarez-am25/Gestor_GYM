@@ -1,0 +1,50 @@
+name: Compilacion, MySQL y Doxygen
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-24.04
+    services:
+      mysql:
+        image: mysql:8.4.13
+        env:
+          MYSQL_DATABASE: gymadmin_test
+          MYSQL_USER: gymadmin
+          MYSQL_PASSWORD: gym_ci
+          MYSQL_ROOT_PASSWORD: root_ci
+        ports: [3306:3306]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot_ci"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Compilar y probar contra MySQL
+        run: mvn -B clean verify -Pmysql-it
+        env:
+          GYM_TEST_DB_URL: jdbc:mysql://127.0.0.1:3306/gymadmin_test?connectionTimeZone=America/Argentina/Buenos_Aires
+          GYM_TEST_DB_USER: gymadmin
+          GYM_TEST_DB_PASSWORD: gym_ci
+      - name: Instalar generadores de documentacion
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+      - name: Generar Doxygen sin advertencias
+        run: doxygen Doxyfile
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verificacion-gymadmin
+          path: |
+            target/surefire-reports/
+            target/failsafe-reports/
+            target/doxygen/
+          retention-days: 14

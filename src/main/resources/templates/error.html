@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecera('Revisar operación')}"></head>
+<body><nav th:replace="~{fragmentos :: menu}"></nav>
+<main class="container py-4"><div th:replace="~{fragmentos :: mensajes}"></div>
+<section class="card p-5 mx-auto comprobante"><p class="eyebrow">REVISAR OPERACIÓN</p><h1 class="h2">No se pudo completar la solicitud.</h1><p th:text="${mensaje != null} ? ${mensaje} : 'Revisá los datos solicitados o volvé al inicio.'"></p><a class="btn btn-primary align-self-start" th:href="@{/}">Volver al inicio</a></section>
+</main><footer th:replace="~{fragmentos :: pie}"></footer></body></html>
