@@ -464,6 +464,9 @@ class AplicacionMySqlIT {
                         assertTrue(respuesta.body().contains("Bronce"));
                         assertTrue(respuesta.body().contains("EFECTIVO"));
                         assertTrue(respuesta.body().contains("Visita abierta"));
+                        assertTrue(
+                                Files.readAllLines(log).contains("GymAdminApp | Gestion de gimnasios"),
+                                "El JAR debe mostrar el mensaje de inicio de GymAdminApp.");
                         return;
                     }
                 } catch (java.io.IOException ex) {
