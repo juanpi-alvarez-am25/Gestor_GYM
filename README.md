@@ -4,12 +4,6 @@ Proyecto integrador de Programación II del IFES. Aplicación web para administr
 
 **Integrantes:** Juan Alvarez, Pablo Ruiz Diaz y Mauro Presso.
 
-## Primera versión de código
-
-Incluye ABM de socios y personal con bajas lógicas, consulta de planes, contratación y renovación con un pago completo, ficha e historiales, recepción, vencimientos, panel y comprobante interno imprimible. El servidor calcula precios y períodos. Los reenvíos utilizan una clave idempotente y las operaciones de un mismo socio se serializan en MySQL.
-
-Es una demostración académica local: escucha en `127.0.0.1`, mantiene CSRF en formularios y no incorpora autenticación ni roles. Los planes iniciales y sus importes son ficticios. No procesa tarjetas o transferencias: registra pagos previamente recibidos. Máquinas, rutinas, reservas, tienda y facturación fiscal quedan fuera del alcance.
-
 ## Ejecutar desde cero en Windows
 
 ### 1. Instalá las herramientas
