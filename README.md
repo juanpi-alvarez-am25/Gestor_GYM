@@ -10,6 +10,102 @@ Incluye ABM de socios y personal con bajas lógicas, consulta de planes, contrat
 
 Es una demostración académica local: escucha en `127.0.0.1`, mantiene CSRF en formularios y no incorpora autenticación ni roles. Los planes iniciales y sus importes son ficticios. No procesa tarjetas o transferencias: registra pagos previamente recibidos. Máquinas, rutinas, reservas, tienda y facturación fiscal quedan fuera del alcance.
 
+## Ejecutar desde cero en Windows
+
+### 1. Instalá las herramientas
+
+- **JDK 17.** En el instalador de Temurin, activá las opciones para agregar Java al `Path` y definir `JAVA_HOME`. [Descargar JDK 17 para Windows](https://adoptium.net/temurin/releases/?version=17&os=windows)
+- **Apache Maven.** Descargá el ZIP binario, descomprimilo y agregá la carpeta `bin` de Maven al `Path` de Windows. [Guía de instalación](https://maven.apache.org/install.html)
+- **MySQL Community Server 8.4 LTS.** Instalalo con el MSI y completá MySQL Configurator. Usá el puerto `3306`, dejá MySQL como servicio de Windows y guardá la contraseña de `root`. [Instalación en Windows](https://dev.mysql.com/doc/refman/8.4/en/windows-installation.html)
+
+Abrí una nueva ventana de PowerShell y ejecutá estos comandos. Ambos deben indicar Java 17.
+
+```powershell
+java -version
+mvn -version
+```
+
+### 2. Descargá el proyecto
+
+En GitHub elegí **Code → Download ZIP** y descomprimilo. En el Explorador de Windows, entrá a la carpeta que contiene `pom.xml`, escribí `powershell` en la barra de direcciones y presioná Enter. Todos los comandos siguientes se ejecutan desde esa carpeta.
+
+### 3. Prepará MySQL una sola vez
+
+Desde PowerShell, abrí el cliente de MySQL con la contraseña de `root`. Este comando usa la ubicación habitual del instalador. Si elegiste otra carpeta, ajustá la ruta a `mysql.exe`.
+
+```powershell
+& "$env:ProgramFiles\MySQL\MySQL Server 8.4\bin\mysql.exe" -u root -p
+```
+
+Cuando veas `mysql>`, copiá este bloque. Reemplazá `TU_CLAVE_LOCAL` por una contraseña propia para el usuario `gymadmin`.
+
+```sql
+SOURCE db/crear-bases.sql;
+CREATE USER 'gymadmin'@'localhost' IDENTIFIED BY 'TU_CLAVE_LOCAL';
+GRANT ALL PRIVILEGES ON gymadmin.* TO 'gymadmin'@'localhost';
+GRANT ALL PRIVILEGES ON gymadmin_test.* TO 'gymadmin'@'localhost';
+exit
+```
+
+Si la cuenta `gymadmin` ya existe, ejecutá el bloque sin `CREATE USER` y usá su contraseña actual. En el primer arranque, la aplicación prepara las tablas y carga los planes iniciales.
+
+### 4. Compilá y arrancá GymAdminApp
+
+De vuelta en PowerShell, compilá el proyecto. La primera compilación necesita Internet para descargar las dependencias.
+
+```powershell
+mvn clean verify
+```
+
+Cuando aparezca `BUILD SUCCESS`, ejecutá el bloque siguiente. Escribí la contraseña del usuario `gymadmin` cuando PowerShell te la pida.
+
+```powershell
+$env:GYM_DB_USER = 'gymadmin'
+$claveGym = Read-Host 'Contraseña de gymadmin' -AsSecureString
+$env:GYM_DB_PASSWORD = [System.Net.NetworkCredential]::new('', $claveGym).Password
+java -jar .\target\gymadmin-1.0.0-SNAPSHOT.jar
+```
+
+La consola muestra `GymAdminApp | Gestion de gimnasios`. Cuando veas `Started GymAdminApplication`, abrí <http://127.0.0.1:8080> en el navegador.
+
+Para detenerla, presioná `Ctrl+C`. Para volver a arrancarla en la misma consola, repetí el comando `java -jar`. Si abrís otra ventana, ejecutá el bloque completo de arranque para volver a cargar las credenciales. Al usar la misma base, se conservan los datos.
+
+## Estructura del proyecto
+
+```text
+Gestor_GYM/
+├── README.md                       # Guía de uso e instalación
+├── pom.xml                         # Dependencias y construcción con Maven
+├── Doxyfile                        # Configuración de Doxygen
+├── .github/workflows/verificar.yml  # Pruebas y documentación en GitHub Actions
+├── db/
+│   ├── crear-bases.sql             # Crea las bases para la app y las pruebas
+│   └── esquema-referencia.sql      # Permite consultar tablas y relaciones
+├── docs/                           # Arquitectura, reglas, pruebas y defensa
+└── src/
+    ├── main/
+    │   ├── java/com/gymadmin/
+    │   │   ├── GymAdminApplication.java  # Punto de arranque
+    │   │   ├── configuracion/             # Componentes de Spring y catálogo inicial
+    │   │   ├── controlador/               # Rutas HTTP y formularios
+    │   │   ├── servicio/                  # Casos de uso y transacciones
+    │   │   ├── repositorio/               # Consultas y escrituras con JDO
+    │   │   └── dominio/                   # Entidades y reglas del gimnasio
+    │   └── resources/
+    │       ├── application.properties    # Configuración de ejecución
+    │       ├── META-INF/persistence.xml  # Unidad de persistencia JDO
+    │       ├── banner.txt                # Mensaje de arranque en consola
+    │       ├── templates/                # Vistas Thymeleaf
+    │       └── static/css/gym.css         # Estilos propios
+    └── test/                       # Pruebas unitarias y de integración
+```
+
+Este es el recorrido al abrir el listado de socios.
+
+1. El navegador envía `GET /socios`. El controlador recibe la solicitud y pide los datos al servicio. [SocioController.java](src/main/java/com/gymadmin/controlador/SocioController.java)
+2. El servicio pasa los filtros al repositorio. Este consulta en MySQL los datos de `Socio` mediante JDO. [SocioService.java](src/main/java/com/gymadmin/servicio/SocioService.java) · [SocioRepositorio.java](src/main/java/com/gymadmin/repositorio/SocioRepositorio.java)
+3. El controlador pasa la lista al `Model`. Thymeleaf usa esos datos para generar la tabla que se muestra en el navegador. [socios/lista.html](src/main/resources/templates/socios/lista.html)
+
 ## Requisitos y versiones
 
 | Componente | Versión fijada |
@@ -26,45 +122,6 @@ Es una demostración académica local: escucha en `127.0.0.1`, mantiene CSRF en 
 | Doxygen / Graphviz | Generación comprobada con Doxygen 1.15.0 y Graphviz |
 
 Se conserva JDO `javax.jdo` para seguir la materia; las validaciones web usan `jakarta.validation` de Spring Boot. No se incorpora JPA ni Hibernate.
-
-## Preparar MySQL
-
-Instalar MySQL Server y arrancar su servicio. En el cliente MySQL, con una cuenta administradora, ejecutar:
-
-```sql
-SOURCE db/crear-bases.sql;
-```
-
-Crear una cuenta local y otorgarle acceso a estos dos esquemas. En el siguiente ejemplo, reemplazar `TU_CLAVE_LOCAL` por una contraseña propia antes de ejecutarlo:
-
-```sql
-CREATE USER 'gymadmin'@'localhost' IDENTIFIED BY 'TU_CLAVE_LOCAL';
-GRANT ALL PRIVILEGES ON gymadmin.* TO 'gymadmin'@'localhost';
-GRANT ALL PRIVILEGES ON gymadmin_test.* TO 'gymadmin'@'localhost';
-```
-
-Si la cuenta ya existe, utilizarla o modificarla desde MySQL. JDO crea y valida las tablas al iniciar; no borra los datos existentes. Es necesario disponer de permisos para crear tablas e índices en esos esquemas. No se incluyen contraseñas reales en el repositorio.
-
-## Compilar y ejecutar en Windows PowerShell
-
-Desde la carpeta del repositorio, comprobar `java -version` y `mvn -version`. Maven debe informar un **JDK 17 completo**, no solo un JRE. Configurar la contraseña para esta sesión:
-
-```powershell
-$env:GYM_DB_USER = 'gymadmin'
-$env:GYM_DB_PASSWORD = Read-Host 'Contraseña local de MySQL'
-mvn clean verify
-java -jar target/gymadmin-1.0.0-SNAPSHOT.jar
-```
-
-Abrir <http://127.0.0.1:8080>. Detener con `Ctrl+C`. Al volver a ejecutar el mismo JAR con el mismo esquema, se conservan personas, contratos, pagos y visitas. El catálogo inicial se agrega una sola vez.
-
-Si MySQL utiliza otro puerto o servidor:
-
-```powershell
-$env:GYM_DB_URL = 'jdbc:mysql://localhost:3306/gymadmin?connectionTimeZone=America/Argentina/Buenos_Aires'
-```
-
-En Linux/macOS se utilizan las mismas variables con `export`. Para desarrollo, `mvn process-classes spring-boot:run` asegura que el enhancer se ejecute antes del arranque. El comando de entrega preferido es el JAR empaquetado.
 
 ## Pruebas
 
@@ -104,11 +161,19 @@ Las clases y métodos públicos/protegidos contienen documentación de responsab
 
 El flujo de GitHub Actions compila con Java 17, ejecuta la integración contra un servicio MySQL y genera Doxygen. Sus reportes se adjuntan como artefactos de cada ejecución; su presencia en el repositorio no implica que una ejecución remota ya esté aprobada.
 
-## Organización y configuración
+## Configuración
 
-`dominio` contiene las entidades; `repositorio` recibe administradores JDO; `servicio` controla casos de uso y transacciones; `controlador` gestiona HTTP; `templates` contiene Thymeleaf. La fábrica se construye con `META-INF/persistence.xml` y las credenciales externas, no mediante propiedades JPA. Cada operación abre y cierra su propio administrador. Las vistas reciben DTO y copias detached con las relaciones necesarias.
+La fábrica de JDO se construye con `META-INF/persistence.xml` y las credenciales de la sesión. Cada operación abre y cierra su propio administrador. Las vistas reciben DTO y copias detached con las relaciones necesarias.
 
 Las variables disponibles son `GYM_DB_URL`, `GYM_DB_USER`, `GYM_DB_PASSWORD` y `GYM_PORT` (8080 por defecto). `GYM_ADDRESS` permite cambiar la dirección de escucha si el entorno de demostración lo requiere. No versionar archivos locales con credenciales ni el directorio `target`.
+
+Si MySQL usa otro puerto o servidor, ajustá la dirección en `GYM_DB_URL` antes de arrancar. Este ejemplo usa el puerto `3307`.
+
+```powershell
+$env:GYM_DB_URL = 'jdbc:mysql://localhost:3307/gymadmin?connectionTimeZone=America/Argentina/Buenos_Aires'
+```
+
+En Linux/macOS se configuran las mismas variables con `export`. Durante el desarrollo, `mvn process-classes spring-boot:run` ejecuta el enhancer de JDO antes de arrancar. Para la entrega se usa el JAR empaquetado.
 
 ## Diagnóstico
 
