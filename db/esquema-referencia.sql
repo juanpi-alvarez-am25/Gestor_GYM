@@ -1,18 +1,4 @@
--- Referencia generada por JDO 3.2.1 / DataNucleus 6.0.11 en MySQL 8.4.13.
--- Solo estructura; la aplicacion crea y valida tablas desde sus metadatos.
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ASISTENCIAS` (
   `ID` bigint NOT NULL AUTO_INCREMENT,
   `INGRESO` datetime NOT NULL,
@@ -30,9 +16,7 @@ CREATE TABLE `ASISTENCIAS` (
   CONSTRAINT `ASISTENCIAS_FK2` FOREIGN KEY (`SOCIO_ID`) REFERENCES `SOCIOS` (`ID`),
   CONSTRAINT `ASISTENCIAS_FK3` FOREIGN KEY (`SOCIO_ABIERTO_ID`) REFERENCES `SOCIOS` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `EMPLEADOS` (
   `ID` bigint NOT NULL,
   `ACTIVO` bit(1) NOT NULL,
@@ -40,9 +24,7 @@ CREATE TABLE `EMPLEADOS` (
   PRIMARY KEY (`ID`),
   CONSTRAINT `EMPLEADOS_FK1` FOREIGN KEY (`ID`) REFERENCES `PERSONAS` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `ENTRENADORES` (
   `ID` bigint NOT NULL,
   `ESPECIALIDAD` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -50,9 +32,7 @@ CREATE TABLE `ENTRENADORES` (
   PRIMARY KEY (`ID`),
   CONSTRAINT `ENTRENADORES_FK1` FOREIGN KEY (`ID`) REFERENCES `EMPLEADOS` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `MEMBRESIAS` (
   `ID` bigint NOT NULL AUTO_INCREMENT,
   `DURACIONDIAS` int NOT NULL,
@@ -69,9 +49,7 @@ CREATE TABLE `MEMBRESIAS` (
   CONSTRAINT `MEMBRESIAS_FK1` FOREIGN KEY (`PLAN_ID`) REFERENCES `PLANES` (`ID`),
   CONSTRAINT `MEMBRESIAS_FK2` FOREIGN KEY (`SOCIO_ID`) REFERENCES `SOCIOS` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `PAGOS` (
   `ID` bigint NOT NULL AUTO_INCREMENT,
   `CLAVEOPERACION` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -87,9 +65,7 @@ CREATE TABLE `PAGOS` (
   KEY `PAGOS_N49` (`MEMBRESIA_ID`),
   CONSTRAINT `PAGOS_FK1` FOREIGN KEY (`MEMBRESIA_ID`) REFERENCES `MEMBRESIAS` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `PERSONAS` (
   `ID` bigint NOT NULL AUTO_INCREMENT,
   `APELLIDO` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -100,9 +76,7 @@ CREATE TABLE `PERSONAS` (
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UQ_PERSONA_DNI` (`DNI`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `PLANES` (
   `ID` bigint NOT NULL AUTO_INCREMENT,
   `ACTIVO` bit(1) NOT NULL,
@@ -113,9 +87,7 @@ CREATE TABLE `PLANES` (
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UQ_PLAN_NOMBRE` (`NOMBRE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `SOCIOS` (
   `ID` bigint NOT NULL,
   `ACTIVO` bit(1) NOT NULL,
@@ -123,14 +95,5 @@ CREATE TABLE `SOCIOS` (
   PRIMARY KEY (`ID`),
   CONSTRAINT `SOCIOS_FK1` FOREIGN KEY (`ID`) REFERENCES `PERSONAS` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
